@@ -39,12 +39,12 @@ parser = OptionParser("""
 #Options:
 
 	--url     target link
-	--img     spide for images: 1 = active, 0 = inactive; (jpg, png, jpeg, ...... etc)
-	--links   spide for links : 1 = active, 0 = inactive;
+	--img     spider for images: 1 = active, 0 = inactive; (jpg, png, jpeg, ...... etc)
+	--links   spider for links : 1 = active, 0 = inactive;
 	
 #Example:
 
-	python SpFire.py --url http://example.com/ --img 1 --links 0
+	python3 SpFire.py --url http://example.com/ --img 1 --links 0
 
 		""")
 
