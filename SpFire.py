@@ -1,9 +1,9 @@
-#!/usr/bin/env python3
+#!/usr/bin/python
 
-import urllib.request
 from bs4 import BeautifulSoup
+import urllib2, time
 from optparse import *
-import sys
+
 
 class colors:
         def __init__(self):
@@ -11,15 +11,17 @@ class colors:
                 self.red = "\033[91m"
                 self.end = "\033[0m"
 cl = colors()
+
+
 print(cl.red+"""
 
 \t######################################################
 \t#                                                    #
 \t#     *                          *   ( *             #
-\t#   (  `                          )  )\ )            #
-\t#   )\))(             (       ( /( ( ()/(   (        #
+\t#   (  `                 *        )  )\ )    *       #
+\t#   )\))(             (       ( /( ( ( )/(  (        #
 \t#  ((_)()\             )\  ( * )\( /) )/(_))`/(      #
-\t#  (_()((_)           (_(  )\ (_))/ (_))  /( / )     #
+\t#  (_()((_)           (_(  )\ (_))/)(_))  /( / )     #
 \t#   / __ \            )_) ((_)| |_( /)_|((_)_(_/     #
 \t#  ( |  |_|           By: @hacklab, @mohamed1lar     #
 \t#   * *           fb.me/hack1lab, fb.me/mohamed1lar  #
@@ -27,128 +29,102 @@ print(cl.red+"""
 \t#   _  * *                    hacklab                #
 \t#  \ \_/ /                    -------                #
 \t#   \___/pFire                                       #
-\t#        v1.0                                        #
+\t#        v1.1                                        #
 \t#                                                    #
 \t######################################################
 
 """+cl.end)
+
+
+url1 = []
+url2 = []
+
 parser = OptionParser("""
 
-####################[ Usage ]########################
+#Usage:
 
-#Options:
+	-t   target host
 
-	--url     target link
-	--img     spider for images: 1 = active, 0 = inactive; (jpg, png, jpeg, ...... etc)
-	--links   spider for links : 1 = active, 0 = inactive;
-	
 #Example:
 
-	python3 SpFire.py --url http://example.com/ --img 1 --links 0
+	python SpFire.py -t https://example.com/
 
-		""")
 
-try:
-	parser.add_option("--url",dest="target",type="string", help="enter target url")
-	parser.add_option("--img",dest="images",type="string", help="enter 1 or 0 (act/inact)")
-	parser.add_option("--links",dest="links",type="string", help="enter 1 or 0 (act/inact)")
-	(options, args) = parser.parse_args()
-	if options.target == None:
-		print(cl.blue+parser.usage+cl.end)
-		exit(0)
-	elif options.images == None and options.links == None:
-		print(cl.blue+parser.usage+cl.end)
-		exit(0)
-	else:
-		target = str(options.target)
-		images = str(options.images)
-		links = str(options.links)
-		urls1 = []
-		urls2 = []
-		img = []
-		try:
-			target_url = target
-			if links == '1':
-				print(cl.blue+"[+] Started Spider For Links....\n"+cl.end)
-				url = urllib.request.urlopen(target_url).read()
-				soup = BeautifulSoup(url, 'html.parser')
-				for line in soup.find_all('a'):
-					newline = line.get('href')
-					try:
-						if newline[:4] == "http":
-							if target_url in newline:
-								urls1.append(str(newline))
-						elif newline[:1] == '/':
-							combline = target_url + newline 
-							urls1.append(str(combline))
-					except:
-						pass
-				for line in soup.find_all('link'):
-					newline = line.get('href')
-					try:
-						if newline[:4] == "http":
-							if target_url in newline:
-								urls1.append(str(newline))
-						elif newline[:1] == '/':
-							combline = target_url + newline 
-							urls1.append(str(combline))
-					except:
-						pass
+""")
 
-				for uurl in urls1:
-					url = urllib.request.urlopen(uurl).read()
-					soup = BeautifulSoup(url, 'html.parser')
-					for line in soup.find_all('a'):
-						newline = line.get('href')
-						try:
-							if newline[:4] == 'http':
-								if target_url in newline:
-									urls2.append(str(newline))
-							#elif newline[:1] == '/':
-							else:
-								combline = uurl + newline
-								urls2.append(str(combline))
-						except:
-							pass
-					for line in soup.find_all('link'):
-						newline = line.get('href')
-						try:
-							if newline[:4] == 'http':
-								if target_url in newline:
-									urls2.append(str(newline))
-							#elif newline[:1] == '/':
-							else:
-								combline = uurl + newline
-								urls2.append(str(combline))
-						except:
-							pass
-				print(cl.blue+"[+] First Page:"+cl.end)
-				for i in urls1:
-					print(i)
 
-				print(cl.blue+"\n[+] Second Pages:"+cl.end)
-				for value in urls2:
-					print(value)
+def write(link):
+	path = url.split("/")[2]
+	with open(path, "a") as f:
+		f.write(link+'\n')
+		f.close()
+
+
+def spider(url, tag, num):
+	try:
+		req = urllib2.Request(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20100101 Firefox/12.0'})
+		open_url = urllib2.urlopen(req).read()
+		soup = BeautifulSoup(open_url, 'html.parser')
+		for line in soup.find_all(tag):
+			newline = line.get('href')
+			if newline[:4] == 'http':
+				if num == 1:
+					if newline in url1:
+						continue
+					else:
+						url1.append(newline)
+						write(newline)
+				elif num == 2:
+					if newline in url2:
+						continue
+					else:
+						url2.append(newline)
+						write(newline)
 			else:
-				pass
+				link = url + newline
+				if link in url1:
+					continue
+				elif num == 1:
+					url1.append(link)
+					write(link)
+				elif num == 2:
+					if link in url2:
+						continue
+					else:
+						url2.append(link)
+						write(link)
+	except:
+		pass
 
-			if images == '1':
-				print(cl.blue+"\n[+] Started Spider For Images....\n"+cl.end)
-				url = urllib.request.urlopen(target_url).read()
-				soup = BeautifulSoup(url, 'html.parser')
-				for line in soup.find_all('img'):
-					newline = line.get('src')
-					img.append(newline)
 
 
-				print(cl.blue+"\n[+] Images:"+cl.end)
-				for i in img:
-					print(i)
+parser.add_option("-t",dest="target",type="string", help="Your Target Host")
+(options, args) = parser.parse_args()
+if options.target == None:
+	print(cl.blue+parser.usage+cl.end)
+	exit(0)
+else:
+	url = str(options.target)
 
-			else:
-				pass
-		
-		except:
-			pass
-except:
-	pass
+
+
+tags = ['a', 'link']
+
+print("\nStart First Spider.......")
+for tag in tags:
+	spider(url, tag, num=1)
+
+for i in url1:
+	print(i)
+
+
+print("\nStart Second Spider.......")
+for tag in tags:
+	for link in url1:
+		if url in link:
+			spider(link, tag, num=2)
+		else:
+			continue
+
+for i in url2:
+	print(i)
