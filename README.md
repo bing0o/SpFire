@@ -1,14 +1,8 @@
 # SpFire
 web crawler &amp; spider using python
-![alt text](https://github.com/mohamed1lar/SpFire/blob/master/spfire.png)
-#Usage:<br/>
-if you wanna get links from website just entre :<br/>
-python3 SpFire.py --url [target link] --links 1
-
-or if you wanna get images links enter:<br/>
-python3 SpFire.py --url [target link] --img 1
-
-or:<br/>
-python3 SpFire.py --url [target link] --links 1 --img 1
+![my image](https://github.com/mohamed1lar/SpFire/blob/master/spfire.png)
+# Usage:
+if you want to get links from a web site just enter:<br/>
+python SpFire.py -t <Your Target Host>
 
 Happy Hacking
