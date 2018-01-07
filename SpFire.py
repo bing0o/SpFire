@@ -1,8 +1,8 @@
 #!/usr/bin/python
 
 from bs4 import BeautifulSoup
-import urllib2, time
 from optparse import *
+import urllib2, time
 
 
 class colors:
@@ -23,13 +23,13 @@ print(cl.red+"""
 \t#  ((_)()\             )\  ( * )\( /) )/(_))`/(      #
 \t#  (_()((_)           (_(  )\ (_))/)(_))  /( / )     #
 \t#   / __ \            )_) ((_)| |_( /)_|((_)_(_/     #
-\t#  ( |  |_|           By: @hacklab, @mohamed1lar     #
+\t#  ( |  |_|           By: @hack1lab, @mohamed1lar    #
 \t#   * *           fb.me/hack1lab, fb.me/mohamed1lar  #
 \t#     * *                                            #
 \t#   _  * *                    hacklab                #
 \t#  \ \_/ /                    -------                #
 \t#   \___/pFire                                       #
-\t#        v1.1                                        #
+\t#        v1.2                                        #
 \t#                                                    #
 \t######################################################
 
@@ -43,11 +43,13 @@ parser = OptionParser("""
 
 #Usage:
 
-	-t   target host
+	-t   Your target host
+	-c   cookie ex: ( -c "cookie_name=cookie_value" )
 
 #Example:
 
 	python SpFire.py -t https://example.com/
+	python Spfire.py -t https://example.com/ -c "cookie_name=cookie_value"
 
 
 """)
@@ -60,9 +62,9 @@ def write(link):
 		f.close()
 
 
-def spider(url, tag, num):
+def spider(url, tag, cookie, num):
 	try:
-		req = urllib2.Request(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20100101 Firefox/12.0'})
+		req = urllib2.Request(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20100101 Firefox/12.0', 'cookie': str(cookie)})
 		open_url = urllib2.urlopen(req).read()
 		soup = BeautifulSoup(open_url, 'html.parser')
 		for line in soup.find_all(tag):
@@ -99,30 +101,32 @@ def spider(url, tag, num):
 
 
 parser.add_option("-t",dest="target",type="string", help="Your Target Host")
+parser.add_option("-c",dest="cookie",type="string", help="Your cookie to request target host")
 (options, args) = parser.parse_args()
 if options.target == None:
 	print(cl.blue+parser.usage+cl.end)
 	exit(0)
 else:
 	url = str(options.target)
+	cookie = str(options.cookie)
 
 
 
 tags = ['a', 'link']
 
-print("\nStart First Spider.......")
+print(cl.blue+"\n[+] Start First Spider......."+cl.end)
 for tag in tags:
-	spider(url, tag, num=1)
+	spider(url, tag, cookie, num=1)
 
 for i in url1:
 	print(i)
 
 
-print("\nStart Second Spider.......")
+print(cl.blue+"\n[+] Start Second Spider......."+cl.end)
 for tag in tags:
 	for link in url1:
 		if url in link:
-			spider(link, tag, num=2)
+			spider(link, tag, cookie, num=2)
 		else:
 			continue
 
