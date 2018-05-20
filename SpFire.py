@@ -29,7 +29,7 @@ print(cl.red+"""
 \t#   _  * *                    hacklab                #
 \t#  \ \_/ /                    -------                #
 \t#   \___/pFire                                       #
-\t#        v1.2                                        #
+\t#        v1.3                                        #
 \t#                                                    #
 \t######################################################
 
@@ -43,92 +43,93 @@ parser = OptionParser("""
 
 #Usage:
 
-	-t   Your target host
+	-t   Your target host ex: (http://example.com)
 	-c   cookie ex: ( -c "cookie_name=cookie_value" )
 
 #Example:
 
 	python SpFire.py -t https://example.com/
-	python Spfire.py -t https://example.com/ -c "cookie_name=cookie_value"
+	python SpFire.py -t https://example.com/ -c "cookie_name=cookie_value"
 
 
 """)
 
+try:
+	def write(link):
+		path = url.split("/")[2]
+		with open(path, "a") as f:
+			f.write(link+'\n')
+			f.close()
 
-def write(link):
-	path = url.split("/")[2]
-	with open(path, "a") as f:
-		f.write(link+'\n')
-		f.close()
 
-
-def spider(url, tag, cookie, num):
-	try:
-		req = urllib2.Request(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20100101 Firefox/12.0', 'cookie': str(cookie)})
-		open_url = urllib2.urlopen(req).read()
-		soup = BeautifulSoup(open_url, 'html.parser')
-		for line in soup.find_all(tag):
-			newline = line.get('href')
-			if newline[:4] == 'http':
-				if num == 1:
-					if newline in url1:
+	def spider(url, tag, cookie, num):
+		try:
+			req = urllib2.Request(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20100101 Firefox/12.0', 'cookie': str(cookie)})
+			open_url = urllib2.urlopen(req).read()
+			soup = BeautifulSoup(open_url, 'html.parser')
+			for line in soup.find_all(tag):
+				newline = line.get('href')
+				if newline[:4] == 'http':
+					if num == 1:
+						if newline in url1:
+							continue
+						else:
+							url1.append(newline)
+							write(newline)
+							print(str(newline))
+					elif num == 2:
+						if newline in url2:
+							continue
+						else:
+							url2.append(newline)
+							write(newline)
+							print(str(newline))
+				else:
+					link = url + newline
+					if link in url1:
 						continue
-					else:
-						url1.append(newline)
-						write(newline)
-				elif num == 2:
-					if newline in url2:
-						continue
-					else:
-						url2.append(newline)
-						write(newline)
-			else:
-				link = url + newline
-				if link in url1:
-					continue
-				elif num == 1:
-					url1.append(link)
-					write(link)
-				elif num == 2:
-					if link in url2:
-						continue
-					else:
-						url2.append(link)
+					elif num == 1:
+						url1.append(link)
 						write(link)
-	except:
-		pass
+						print(str(link))
+					elif num == 2:
+						if link in url2:
+							continue
+						else:
+							url2.append(link)
+							write(link)
+							print(str(link))
+		except:
+			pass
 
 
 
-parser.add_option("-t",dest="target",type="string", help="Your Target Host")
-parser.add_option("-c",dest="cookie",type="string", help="Your cookie to request target host")
-(options, args) = parser.parse_args()
-if options.target == None:
-	print(cl.blue+parser.usage+cl.end)
-	exit(0)
-else:
-	url = str(options.target)
-	cookie = str(options.cookie)
+	parser.add_option("-t",dest="target",type="string", help="Your Target Host")
+	parser.add_option("-c",dest="cookie",type="string", help="Your cookie to request target host")
+	(options, args) = parser.parse_args()
+	if options.target == None:
+		print(cl.blue+parser.usage+cl.end)
+		exit(0)
+	else:
+		url = str(options.target)
+		cookie = str(options.cookie)
 
 
 
-tags = ['a', 'link']
+	tags = ['a', 'link']
 
-print(cl.blue+"\n[+] Start First Spider......."+cl.end)
-for tag in tags:
-	spider(url, tag, cookie, num=1)
-
-for i in url1:
-	print(i)
+	print(cl.blue+"\n[+] Start First Spider......."+cl.end)
+	for tag in tags:
+		spider(url, tag, cookie, num=1)
 
 
-print(cl.blue+"\n[+] Start Second Spider......."+cl.end)
-for tag in tags:
-	for link in url1:
-		if url in link:
-			spider(link, tag, cookie, num=2)
-		else:
-			continue
+	print(cl.blue+"\n[+] Start Second Spider......."+cl.end)
+	for tag in tags:
+		for link in url1:
+			if url in link:
+				spider(link, tag, cookie, num=2)
+			else:
+				continue
 
-for i in url2:
-	print(i)
+except KeyboardInterrupt:
+	print"\n* Good bye! *\n"
