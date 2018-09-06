@@ -6,7 +6,7 @@ web crawler &amp; spider using python
 if you want to get links from a web site just enter:<br/>
 python SpFire.py -t [Your Target Host]
 
-also, you can use your cookie to request target host looks like:<br/>
+also, you can use your cookie to request target host, like the following command:<br/>
 python SpFire.py -t [Your Target Host] -c "cookie_name=cookie_value"
 
 Happy Hacking
